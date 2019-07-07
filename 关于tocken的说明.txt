@@ -1,0 +1,31 @@
+// 基础access_token需要保存，OAuth2.0用到手access_token无需保存，分享用到的jsapi_ticket要保存
+// access_token是公众号的全局唯一接口调用凭据，公众号调用各接口时都需使用access_token。
+// 开发者需要进行妥善保存。access_token的存储至少要保留512个字符空间。access_token的有效期目
+// 前为2个小时，需定时刷新，重复获取将导致上次获取的access_token失效。
+//关于网页授权access_token和普通access_token的区别
+//
+//1、微信网页授权是通过OAuth2.0机制实现的，在用户授权给公众号后，公众号可以获取到一个网页授权特有的接口调
+// 用凭证（网页授权access_token），通过网页授权access_token可以进行授权后接口调用，如获取用户基本信息；
+//
+//2、其他微信接口，需要通过基础支持中的“获取access_token”接口来获取到的普通access_token调用。
+//1 第一步：用户同意授权，获取code
+//
+//2 第二步：通过code换取网页授权access_token(无上限)
+//
+//3 第三步：刷新access_token（如果需要）
+//
+//4 第四步：拉取用户信息(需scope为 snsapi_userinfo)
+//第三方网页通过Oauth2.0获取用户授权
+// 获取code
+// 通过code获取access_token
+// 通过access_token获取用户信息，仅限scope为SCOPE_POP
+// 通过appid和appsecret获取wx_AccessToken
+
+
+//==========================================
+// 付款码支付
+// Native支付
+// JSAPI支付
+//①、获取用户openid
+//②、统一下单
+//③、在支持成功回调通知中处理成功之后的事宜，见 notify.php

@@ -1,0 +1,28 @@
+package config
+
+var Links = map[string]string{
+	"access_token":       "https://api.weixin.qq.com/cgi-bin/token",
+	"message":            "https://api.weixin.qq.com/cgi-bin/message/custom/send",
+	"group_create":       "https://api.weixin.qq.com/cgi-bin/groups/create",
+	"group_get":          "https://api.weixin.qq.com/cgi-bin/groups/get",
+	"group_getid":        "https://api.weixin.qq.com/cgi-bin/groups/getid",
+	"group_rename":       "https://api.weixin.qq.com/cgi-bin/groups/update",
+	"group_move":         "https://api.weixin.qq.com/cgi-bin/groups/members/update",
+	"user_info":          "https://api.weixin.qq.com/cgi-bin/user/info",
+	"user_get":           "https://api.weixin.qq.com/cgi-bin/user/get",
+	"menu_create":        "https://api.weixin.qq.com/cgi-bin/menu/create",
+	"menu_get":           "https://api.weixin.qq.com/cgi-bin/menu/get",
+	"menu_delete":        "https://api.weixin.qq.com/cgi-bin/menu/delete",
+	"qrcode":             "https://api.weixin.qq.com/cgi-bin/qrcode/create",
+	"showqrcode":         "https://mp.weixin.qq.com/cgi-bin/showqrcode",
+	"media_download":     "http://file.api.weixin.qq.com/cgi-bin/media/get",
+	"media_upload":       "http://file.api.weixin.qq.com/cgi-bin/media/upload",
+	"media_uploadnews":   "https://api.weixin.qq.com/cgi-bin/media/uploadnews",
+	"mass_sendall":       "https://api.weixin.qq.com/cgi-bin/message/mass/sendall",
+	"mass_send":          "https://api.weixin.qq.com/cgi-bin/message/mass/send",
+	"oauth_code":         "https://open.weixin.qq.com/connect/oauth2/authorize",
+	"oauth_access_token": "https://api.weixin.qq.com/sns/oauth2/access_token",
+	"oauth_refresh":      "https://api.weixin.qq.com/sns/oauth2/refresh_token",
+	"oauth_userinfo":     "https://api.weixin.qq.com/sns/userinfo",
+	"js_api_tocket":      "https://api.weixin.qq.com/cgi-bin/ticket/getticket",
+}
