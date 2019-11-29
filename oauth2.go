@@ -26,6 +26,7 @@ func (this *Wechat) GetOauthAccessToken(code string) (token []byte) {
 	defer resp.Body.Close()
 	if err != nil {
 		log.Println("GetOauthAccessToken Error", err)
+		return []byte{}
 	}
 
 	if resp.StatusCode != http.StatusOK {

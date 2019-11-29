@@ -1,6 +1,6 @@
 微信SDK
 ======
-提供微信常用的功能，如接入，各种事件，用户基本信息，菜单，场景二维码，jssdk等常用功能
+提供微信常用的功能，如接入，各种事件，用户基本信息，菜单，情景二维码，jssdk等常用功能
 
 ## 安装
 `go get github.com/wxj2016/wechat`
@@ -22,15 +22,6 @@ func init() {
 	if err != nil {
 		log.Println(err)
 	}
-}
-
-type WxController struct {
-	beego.Controller
-}
-
-// @router /cbdwechat/index [get,post]
-func (this *WxController) Oauth() {
-	this.EnableRender = false
 	wx.FuncTxt = func(s string) string {
 		if s == "追梦人" {
 			return "追梦人 点击进入签到:http://www.cbd88.com"
@@ -48,13 +39,21 @@ func (this *WxController) Oauth() {
 			return "通过场景二维码103进来的 请点击签到 http://www.cbd88.com"
 		}
 		return "CBD家居欢迎您！"
-	}
+	}	
+}
 
+type WxController struct {
+	beego.Controller
+}
+
+// @router /cbdwechat/index [get,post]
+func (this *WxController) Oauth() {
+	this.EnableRender = false
 	wx.Run(this.Ctx.Request, this.Ctx.ResponseWriter)
 }
 ```
 
-####场景二维码生成
+####情景二维码生成
 ```
 var str = `{"action_name": "QR_LIMIT_SCENE", "action_info": {"scene": {"scene_id": 103}}}`
 this.Redirect(wx.GetQrcode(str), 302)

@@ -96,7 +96,7 @@ func (this *Wechat) GetWechatConfig(url string, debug bool) string {
 	//log.Println("my_string:", my_string)
 	signature := tools.MySha1(my_string)
 	//log.Println("signature:", signature)
-	signPackage := signPackage{debug, this.appid, nonceStr, int(time.Now().Unix()), url, signature, []string{"updateAppMessageShareData", "updateTimelineShareData"}}
+	signPackage := signPackage{debug, this.appid, nonceStr, int(time.Now().Unix()), url, signature, []string{"updateAppMessageShareData", "updateTimelineShareData", "checkJsApi", "scanQRCode"}}
 	data, err := json.Marshal(signPackage)
 	if err != nil {
 		fmt.Println(err)
