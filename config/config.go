@@ -1,5 +1,5 @@
 package config
-
+var Redishost="192.168.28.9:6379"
 var Links = map[string]string{
 	"access_token":       "https://api.weixin.qq.com/cgi-bin/token",
 	"message":            "https://api.weixin.qq.com/cgi-bin/message/custom/send",
@@ -25,4 +25,7 @@ var Links = map[string]string{
 	"oauth_refresh":      "https://api.weixin.qq.com/sns/oauth2/refresh_token",
 	"oauth_userinfo":     "https://api.weixin.qq.com/sns/userinfo",
 	"js_api_tocket":      "https://api.weixin.qq.com/cgi-bin/ticket/getticket",
+	"shorturl":"https://api.weixin.qq.com/cgi-bin/shorturl",
+	"template_send":"https://api.weixin.qq.com/cgi-bin/message/template/send",
+	"subscribe":"https://api.weixin.qq.com/cgi-bin/message/template/subscribe",
 }

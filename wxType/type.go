@@ -16,6 +16,7 @@ type Otoken struct {
 
 type UserInfo struct {
 	Openid     string
+	Unionid    string
 	Nickname   string
 	Sex        int
 	Language   string

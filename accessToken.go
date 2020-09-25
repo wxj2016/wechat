@@ -12,20 +12,26 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"time"
 	"wechat/config"
-	"wechat/tools"
 	"wechat/wxType"
 )
 
 // 外部获取AccessToken
 func (this *Wechat) GetAccessToken() string {
 	// 获取ticket内容
-	json_str := tools.ReadFile(this.SaveFileDir + string(os.PathSeparator) + "/token.txt")
-	// 解析json串
+	//json_str := tools.ReadFile(this.SaveFileDir + string(os.PathSeparator) + "/token.txt")
 	j := jsonToken{}
-	err := json.Unmarshal([]byte(json_str), &j)
+	s,_:=R.Get("token").Result()
+	if s==""{
+		token, err := this.fetchAccessToken()
+		if err != nil {
+			log.Println(err)
+		}
+		return token.AccessToken
+	}
+	// 解析json串
+	err := json.Unmarshal([]byte(s), &j)
 	if err != nil {
 		fmt.Println("GetAccessToken err:", err)
 		token, err := this.fetchAccessToken()
@@ -40,6 +46,7 @@ func (this *Wechat) GetAccessToken() string {
 	access_token := j.Access_token
 
 	if expire_time < int(time.Now().Unix()) {
+		log.Println("----------过期了")
 		token, err := this.fetchAccessToken()
 		if err != nil {
 			log.Println(err)
@@ -75,11 +82,12 @@ func (this *Wechat) fetchAccessToken() (wxType.BasicToken, error) {
 		return token, err
 	}
 	// 保存到文件中
-	jj := jsonToken{int(time.Now().Unix()) + 7000, token.AccessToken}
+	jj := jsonToken{int(time.Now().Unix()) + 7180, token.AccessToken}
 	data, err := json.Marshal(jj)
 	if err != nil {
 		log.Println("fetchAccessToken Marshal error", err)
 	}
-	tools.SetFile(string(data), this.SaveFileDir+string(os.PathSeparator)+"/token.txt")
+	R.Set("token",data,time.Duration(time.Second*7180)).Err()
+	//tools.SetFile(string(data), this.SaveFileDir+string(os.PathSeparator)+"/token.txt")
 	return token, nil
 }

@@ -3,11 +3,29 @@ package wechat
 import (
 	"crypto/sha1"
 	"fmt"
+	"github.com/go-redis/redis"
 	"log"
 	"net/http"
 	"os"
 	"sort"
+	"wechat/config"
 )
+
+var R *redis.Client
+func init()  {
+	// redis ================================================
+	client := redis.NewClient(&redis.Options{
+		Addr:   config.Redishost,
+		Password: "", // no password set
+		DB:       0,  // use default DB
+	})
+	_, err := client.Ping().Result()
+	if err != nil {
+		panic(err)
+	} else {
+		R = client
+	}
+}
 
 type weixinQuery struct {
 	Signature    string `json:"signature"`
@@ -64,14 +82,12 @@ func NewWx(appid, token, appsecret, SaveFileDir string) (wx *Wechat, err error) 
 
 	if SaveFileDir != "" {
 		wx.SaveFileDir = SaveFileDir
-	} else {
-		wx.SaveFileDir = "wxTokenJsTicketFile"
-	}
-	err = os.Mkdir(wx.SaveFileDir, os.ModePerm)
+		err = os.Mkdir(wx.SaveFileDir, os.ModePerm)
 
-	if err != nil {
-		if os.IsNotExist(err) {
-			log.Println(err)
+		if err != nil {
+			if os.IsNotExist(err) {
+				log.Println(err)
+			}
 		}
 	}
 	return wx, nil
@@ -106,6 +122,7 @@ func (this *Wechat) initWxQuery() {
 	q.EncryptType = this.Request.URL.Query().Get("encrypt_type")
 	q.MsgSignature = this.Request.URL.Query().Get("msg_signature")
 	this.Query = q
+	//log.Println("===", this.Query, "===")
 }
 
 func (this *Wechat) signature() string {

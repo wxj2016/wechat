@@ -22,18 +22,19 @@ func (this *Wechat) GetOauthCode(redirect, scope, state string) (redirectUrl str
 // 通过code获取access_token
 func (this *Wechat) GetOauthAccessToken(code string) (token []byte) {
 	url := config.Links["oauth_access_token"] + "?appid=" + this.appid + "&secret=" + this.appsecret + "&code=" + code + "&grant_type=authorization_code"
+	bytes := []byte{}
 	resp, err := http.Get(url)
-	defer resp.Body.Close()
 	if err != nil {
+		defer resp.Body.Close()
 		log.Println("GetOauthAccessToken Error", err)
-		return []byte{}
+		return bytes
 	}
 
 	if resp.StatusCode != http.StatusOK {
 		log.Println("Error:GetOauthAccessToken status code", resp.StatusCode)
 	}
 	bodyReader := bufio.NewReader(resp.Body)
-	bytes, _ := ioutil.ReadAll(bodyReader)
+	bytes, _ = ioutil.ReadAll(bodyReader)
 
 	return bytes
 }
