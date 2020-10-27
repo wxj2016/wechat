@@ -6,7 +6,7 @@
 `go get github.com/wxj2016/wechat`
 
 ## 在Beego上的用法
-####接入和一些消息的接管
+#### 接入和一些消息的接管
 ```
 const redirect = "http://wx.cbd88.com"
 
@@ -17,11 +17,23 @@ var appid = "xxxxxxxxxx"
 var appsecret = "xxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
 func init() {
-	w, err := wechat.NewWx(appid, Token, appsecret, "")
+	// wx Token redis ================================================
+	wxtokendbclient := redis.NewClient(&redis.Options{
+		Addr:     "redishost",
+		Password: "",        // no password set
+		DB:       15, // use default DB
+	})
+	_, err := wxtokendbclient.Ping().Result()
+	if err != nil {
+		panic(err)
+	}
+
+	w, err := wechat.NewWx(beego.AppConfig.String("appid"), beego.AppConfig.String("Token"), beego.AppConfig.String("appsecret"), wxtokendbclient)
 	wx = w
 	if err != nil {
 		log.Println(err)
 	}
+
 	wx.FuncTxt = func(s string) string {
 		if s == "追梦人" {
 			return "追梦人 点击进入签到:http://www.cbd88.com"
@@ -53,13 +65,13 @@ func (this *WxController) Oauth() {
 }
 ```
 
-####情景二维码生成
+#### 情景二维码生成
 ```
 var str = `{"action_name": "QR_LIMIT_SCENE", "action_info": {"scene": {"scene_id": 103}}}`
 this.Redirect(wx.GetQrcode(str), 302)
 ```
 
-####取用户基本信息
+#### 取用户基本信息
 ```
 func (this *WxController) Index() {
 	code := this.GetString("code")
@@ -87,7 +99,7 @@ func (this *WxController) Index() {
 }
 ```
 
-####创建和删除菜单方法
+#### 创建和删除菜单方法
 ```
 var menus = `{
   "button":[
@@ -112,7 +124,7 @@ err:=wx.MenuDelete()
 ```
 
 
-####jssdk
+#### jssdk
 ```
 config：=wx.GetWechatConfig(url, false)
 ```
