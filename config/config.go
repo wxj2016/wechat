@@ -1,5 +1,5 @@
 package config
-var Redishost="192.168.28.9:6379"
+//var Redishost="192.168.28.9:6379"
 var Links = map[string]string{
 	"access_token":       "https://api.weixin.qq.com/cgi-bin/token",
 	"message":            "https://api.weixin.qq.com/cgi-bin/message/custom/send",

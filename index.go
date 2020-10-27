@@ -4,28 +4,25 @@ import (
 	"crypto/sha1"
 	"fmt"
 	"github.com/go-redis/redis"
-	"log"
 	"net/http"
-	"os"
 	"sort"
-	"wechat/config"
 )
 
 var R *redis.Client
-func init()  {
-	// redis ================================================
-	client := redis.NewClient(&redis.Options{
-		Addr:   config.Redishost,
-		Password: "", // no password set
-		DB:       0,  // use default DB
-	})
-	_, err := client.Ping().Result()
-	if err != nil {
-		panic(err)
-	} else {
-		R = client
-	}
-}
+//func init()  {
+//	// redis ================================================
+//	client := redis.NewClient(&redis.Options{
+//		Addr:   config.Redishost,
+//		Password: "", // no password set
+//		DB:       0,  // use default DB
+//	})
+//	_, err := client.Ping().Result()
+//	if err != nil {
+//		panic(err)
+//	} else {
+//		R = client
+//	}
+//}
 
 type weixinQuery struct {
 	Signature    string `json:"signature"`
@@ -56,11 +53,12 @@ type jsonTicket struct {
 	Jsapi_ticket string
 }
 
-func NewWx(appid, token, appsecret, SaveFileDir string) (wx *Wechat, err error) {
+func NewWx(appid, token, appsecret string,r *redis.Client) (wx *Wechat, err error) {
 	wx = &Wechat{}
 	wx.appid = appid
 	wx.Token = token
 	wx.appsecret = appsecret
+	R=r
 
 	// 初始化默认文本信息处理方法
 	wx.FuncTxt = func(inMsg string) string {
@@ -80,16 +78,16 @@ func NewWx(appid, token, appsecret, SaveFileDir string) (wx *Wechat, err error) 
 		return inMsg
 	}
 
-	if SaveFileDir != "" {
-		wx.SaveFileDir = SaveFileDir
-		err = os.Mkdir(wx.SaveFileDir, os.ModePerm)
-
-		if err != nil {
-			if os.IsNotExist(err) {
-				log.Println(err)
-			}
-		}
-	}
+	//if SaveFileDir != "" {
+	//	wx.SaveFileDir = SaveFileDir
+	//	err = os.Mkdir(wx.SaveFileDir, os.ModePerm)
+	//
+	//	if err != nil {
+	//		if os.IsNotExist(err) {
+	//			log.Println(err)
+	//		}
+	//	}
+	//}
 	return wx, nil
 }
 

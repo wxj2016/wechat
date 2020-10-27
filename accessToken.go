@@ -23,6 +23,7 @@ func (this *Wechat) GetAccessToken() string {
 	//json_str := tools.ReadFile(this.SaveFileDir + string(os.PathSeparator) + "/token.txt")
 	j := jsonToken{}
 	s,_:=R.Get("token").Result()
+
 	if s==""{
 		token, err := this.fetchAccessToken()
 		if err != nil {
@@ -61,11 +62,11 @@ func (this *Wechat) fetchAccessToken() (wxType.BasicToken, error) {
 	url := config.Links["access_token"] + "?grant_type=client_credential&appid=" + this.appid + "&secret=" + this.appsecret
 	var token wxType.BasicToken
 	resp, err := http.Get(url)
-	defer resp.Body.Close()
 	if err != nil {
 		log.Println(err, "fetchAccessToken Error", err)
 		return token, err
 	}
+	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		fmt.Println("Error:status code", resp.StatusCode)
@@ -81,12 +82,14 @@ func (this *Wechat) fetchAccessToken() (wxType.BasicToken, error) {
 		log.Println(err, "Unmarshal Error")
 		return token, err
 	}
+
 	// 保存到文件中
 	jj := jsonToken{int(time.Now().Unix()) + 7180, token.AccessToken}
 	data, err := json.Marshal(jj)
 	if err != nil {
 		log.Println("fetchAccessToken Marshal error", err)
 	}
+
 	R.Set("token",data,time.Duration(time.Second*7180)).Err()
 	//tools.SetFile(string(data), this.SaveFileDir+string(os.PathSeparator)+"/token.txt")
 	return token, nil

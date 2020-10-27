@@ -9,6 +9,7 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -70,7 +71,8 @@ func (this *Wechat) getJsApiTicket() (ticket string) {
 	//json_str := tools.ReadFile(this.SaveFileDir + string(os.PathSeparator) + "ticket.txt")
 	json_str,_:=R.Get("ticket").Result()
 	if json_str==""{
-		access_token, _ := this.fetchAccessToken()
+		access_token, err := this.fetchAccessToken()
+		log.Println(err)
 		s, _ := this.fetchJsApiTicket(access_token.AccessToken)
 		return s
 	}
@@ -100,7 +102,6 @@ func (this *Wechat) GetWechatConfig(url string, debug bool) string {
 	ticket := this.getJsApiTicket()
 	nonceStr := tools.GetRandomString(16)
 	my_string := fmt.Sprintf("jsapi_ticket=%s&noncestr=%s&timestamp=%s&url=%s", ticket, nonceStr, strconv.Itoa(int(time.Now().Unix())), url)
-	//log.Println("my_string:", my_string)
 	signature := tools.MySha1(my_string)
 	//log.Println("signature:", signature)
 	signPackage := signPackage{debug, this.appid, nonceStr, int(time.Now().Unix()), url, signature, []string{"updateAppMessageShareData", "updateTimelineShareData", "checkJsApi", "scanQRCode", "onMenuShareTimeline", "onMenuShareAppMessage","chooseImage","previewImage","uploadImage"}}
@@ -142,26 +143,39 @@ func (this *Wechat) Getjsapisign(url string) (string,int,string,string) {
 }
 
 //https://api.weixin.qq.com/cgi-bin/shorturl?access_token=ACCESS_TOKEN
-func (this *Wechat) Getsorturl(logurl string) (string) {
+func (this *Wechat) Getsorturl(logurl string) (string,error) {
+	if logurl=="" {
+		return "",errors.New("长地址不可为空")
+	}
 	token := this.GetAccessToken()
+	if token==""{
+		return "",errors.New("token未取到")
+	}
 	url := config.Links["shorturl"] + "?access_token=" + token
 
 	ns:=fmt.Sprintf(`{
   "action":"long2short",
-  "long_url":"%s",
+  "long_url":"%s"
 }`,logurl)
-	log.Println("HHHHHHHH:",ns)
 	reader := bytes.NewBuffer([]byte(ns))
 	bodytype := "application/json;charset=utf-8"
 	res_post, err := http.Post(url, bodytype, reader)
+	log.Println("999res_post","==================",res_post)
 	if err == nil {
 		body_post, _ := ioutil.ReadAll(res_post.Body)
 		defer res_post.Body.Close()
-
-		return string(body_post)
+		rest:= struct {
+			Errcode int `json:"errcode"`
+			Errmsg string `json:"errmsg"`
+			Short_url string `json:"short_url"`
+		}{}
+		err := json.Unmarshal(body_post, &rest)
+		if err!=nil{
+			return "",err
+		}
+		return rest.Short_url,nil
 	}else{
-		log.Println("++++++1589103976+++++++",err)
-		return ""
+		return "",err
 	}
 }
 
